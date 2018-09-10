@@ -1,0 +1,390 @@
+library(dplyr)
+library(tidyverse)
+
+credit <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\creditcard_atit.csv",header=TRUE)
+
+p2m <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\p2m.csv",header=TRUE)
+
+p2p <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\p2p_atit.csv",header=TRUE)
+
+cashin <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\cashin_rev_atit.csv",header=TRUE)
+
+cashout <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\cashout_atit.csv",header=TRUE)
+
+stbill <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\bill_atit.csv",header=TRUE)
+
+remit <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\remit_atit.csv",header=TRUE)
+
+vpc <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\vpc_rev_atit.csv",header=TRUE)
+
+colnames(cashin) <- c("DEST_CUST_ID","MonthYearCashin","SumAmtCashin","CountAmtCashin")
+#Credit Card Cashin.
+
+colnames(credit) <- colnames(p2m)
+
+#May.
+
+credit_may <- subset(credit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+p2m_may <- subset(p2m, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+credit_may_nop2m <- credit_may[,1]
+
+credit_may_nop2m <- credit_may_nop2m[!(credit_may_nop2m %in% p2m_may[,1])]
+
+p2p_may <- subset(p2p, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+credit_may_nop2m_nop2p <- credit_may_nop2m[!(credit_may_nop2m %in% p2p_may[,1])]
+
+remit_may <- subset(remit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+credit_may_nop2m_nop2p_noremit <- credit_may_nop2m_nop2p[!(credit_may_nop2m_nop2p %in% remit_may[,1])]
+
+vpc_may <- subset(vpc, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+credit_may_nop2m_nop2p_noremit_novpc <- credit_may_nop2m_nop2p_noremit[!(credit_may_nop2m_nop2p_noremit %in% vpc_may[,1])]
+
+
+
+cashout_may <- subset(cashout, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+ 
+credit_may_nop2m_nop2p_noremit_novpc_cashout <- credit_may_nop2m_nop2p_noremit_novpc[(credit_may_nop2m_nop2p_noremit_novpc %in% cashout_may[,1])]
+
+
+
+cc_may <- cashout_may %>%
+filter(USER_ID %in% credit_may_nop2m_nop2p_noremit_novpc_cashout)
+
+cc_df_may <- as.data.frame(cc_may)
+
+cashin_may <- subset(cashin, as.character(MonthYearCashin) == "05-2018")
+
+colnames(cashin_may)[1] <- "USER_ID"
+
+cc_df_may_comb <- merge(cc_df_may, cashin_may, by = 'USER_ID')
+
+cc_fin_may <- cc_df_may_comb %>%
+filter(SUM.ORIG_AMT. >= 0.5 *  CountAmtCashin)
+
+
+#June.
+
+credit_jun <- subset(credit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+p2m_jun <- subset(p2m, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+credit_jun_nop2m <- credit_jun[,1]
+
+credit_jun_nop2m <- credit_jun_nop2m[!(credit_jun_nop2m %in% p2m_jun[,1])]
+
+p2p_jun <- subset(p2p, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+credit_jun_nop2m_nop2p <- credit_jun_nop2m[!(credit_jun_nop2m %in% p2p_jun[,1])]
+
+remit_jun <- subset(remit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+credit_jun_nop2m_nop2p_noremit <- credit_jun_nop2m_nop2p[!(credit_jun_nop2m_nop2p %in% remit_jun[,1])]
+
+vpc_jun <- subset(vpc, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+credit_jun_nop2m_nop2p_noremit_novpc <- credit_jun_nop2m_nop2p_noremit[!(credit_jun_nop2m_nop2p_noremit %in% vpc_jun[,1])]
+
+cashout_jun <- subset(cashout, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+ 
+credit_jun_nop2m_nop2p_noremit_novpc_cashout <- credit_jun_nop2m_nop2p_noremit_novpc[(credit_jun_nop2m_nop2p_noremit_novpc %in% cashout_jun[,1])]
+
+cc_jun <- cashout_jun %>%
+filter(USER_ID %in% credit_jun_nop2m_nop2p_noremit_novpc_cashout)
+
+cc_df_jun <- as.data.frame(cc_jun)
+
+#cashin_jun <- subset(cashin, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+cashin_jun <- subset(cashin, as.character(MonthYearCashin) == "06-2018")
+
+colnames(cashin_jun)[1] <- "USER_ID"
+
+cc_df_jun_comb <- merge(cc_df_jun, cashin_jun, by = 'USER_ID')
+
+cc_fin_jun <- cc_df_jun_comb %>%
+filter(SUM.ORIG_AMT. >= 0.5 *  CountAmtCashin)
+
+
+#Check Cash In Extraction, use Dest ID instead of User_ID.
+#Same for VPC extraction.
+#cc_df_jun is users who top up via Credit Card, no p2m, no p2p, no remit in jun.
+
+#July.
+
+credit_jul <- subset(credit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+p2m_jul <- subset(p2m, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+credit_jul_nop2m <- credit_jul[,1]
+
+credit_jul_nop2m <- credit_jul_nop2m[!(credit_jul_nop2m %in% p2m_jul[,1])]
+
+p2p_jul <- subset(p2p, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+credit_jul_nop2m_nop2p <- credit_jul_nop2m[!(credit_jul_nop2m %in% p2p_jul[,1])]
+
+remit_jul <- subset(remit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+credit_jul_nop2m_nop2p_noremit <- credit_jul_nop2m_nop2p[!(credit_jul_nop2m_nop2p %in% remit_jul[,1])]
+
+vpc_jul <- subset(vpc, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+credit_jul_nop2m_nop2p_noremit_novpc <- credit_jul_nop2m_nop2p_noremit[!(credit_jul_nop2m_nop2p_noremit %in% vpc_jul[,1])]
+
+cashout_jul <- subset(cashout, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+ 
+credit_jul_nop2m_nop2p_noremit_novpc_cashout <- credit_jul_nop2m_nop2p_noremit_novpc[(credit_jul_nop2m_nop2p_noremit_novpc %in% cashout_jul[,1])]
+
+cc_jul <- cashout_jul %>%
+filter(USER_ID %in% credit_jul_nop2m_nop2p_noremit_novpc_cashout)
+
+cc_df_jul <- as.data.frame(cc_jul)
+
+#cashin_jul <- subset(cashin, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+cashin_jul <- subset(cashin, as.character(MonthYearCashin) == "07-2018")
+
+colnames(cashin_jul)[1] <- "USER_ID"
+
+cc_df_jul_comb <- merge(cc_df_jul, cashin_jul, by = 'USER_ID')
+
+cc_fin_jul <- cc_df_jul_comb %>%
+filter(SUM.ORIG_AMT. >= 0.5 *  CountAmtCashin)
+
+
+
+#Check Cash In Extraction, use Dest ID instead of User_ID.
+#Same for VPC extraction.
+#cc_df_jul is users who top up via Credit Card, no p2m, no p2p, no remit in jul.
+
+#######################################################################
+##########################################################################
+
+#############################################################################
+##############################################################################
+
+#Singtel Bill Top Up.
+
+#May.
+
+stbill_may <- subset(stbill, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+p2m_may <- subset(p2m, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+stbill_may_nop2m <- stbill_may[,1]
+
+stbill_may_nop2m <- stbill_may_nop2m[!(stbill_may_nop2m %in% p2m_may[,1])]
+
+p2p_may <- subset(p2p, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+stbill_may_nop2m_nop2p <- stbill_may_nop2m[!(stbill_may_nop2m %in% p2p_may[,1])]
+
+remit_may <- subset(remit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+stbill_may_nop2m_nop2p_noremit <- stbill_may_nop2m_nop2p[!(stbill_may_nop2m_nop2p %in% remit_may[,1])]
+
+vpc_may <- subset(vpc, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+stbill_may_nop2m_nop2p_noremit_novpc <- stbill_may_nop2m_nop2p_noremit[!(stbill_may_nop2m_nop2p_noremit %in% vpc_may[,1])]
+
+
+cashout_may <- subset(cashout, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+ 
+stbill_may_nop2m_nop2p_noremit_novpc_cashout <- stbill_may_nop2m_nop2p_noremit_novpc[(stbill_may_nop2m_nop2p_noremit_novpc %in% cashout_may[,1])]
+
+stc_may <- cashout_may %>%
+filter(USER_ID %in% stbill_may_nop2m_nop2p_noremit_novpc_cashout)
+
+stc_df_may <- as.data.frame(stc_may)
+
+#cashin_may <- subset(cashin, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+#cashin_jun <- subset(cashin, as.character(MonthYearCashin) == "06-2018")
+
+#colnames(cashin_jun)[1] <- "USER_ID"
+
+stc_df_may_comb <- merge(stc_df_may, cashin_may, by = 'USER_ID')
+
+stc_fin_may <- stc_df_may_comb %>%
+filter(SUM.ORIG_AMT. >= 0.5 *  CountAmtCashin)
+
+
+
+#Check Cash In Extraction, use Dest ID instead of User_ID.
+#Same for VPC extraction.
+#stc_df_may is users who top up via Singtel Bill, no p2m, no p2p, no remit in may.
+
+#June.
+
+stbill_jun <- subset(stbill, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+p2m_jun <- subset(p2m, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+stbill_jun_nop2m <- stbill_jun[,1]
+
+stbill_jun_nop2m <- stbill_jun_nop2m[!(stbill_jun_nop2m %in% p2m_jun[,1])]
+
+p2p_jun <- subset(p2p, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+stbill_jun_nop2m_nop2p <- stbill_jun_nop2m[!(stbill_jun_nop2m %in% p2p_jun[,1])]
+
+remit_jun <- subset(remit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+stbill_jun_nop2m_nop2p_noremit <- stbill_jun_nop2m_nop2p[!(stbill_jun_nop2m_nop2p %in% remit_jun[,1])]
+
+vpc_jun <- subset(vpc, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+stbill_jun_nop2m_nop2p_noremit_novpc <- stbill_jun_nop2m_nop2p_noremit[!(stbill_jun_nop2m_nop2p_noremit %in% vpc_jun[,1])]
+
+
+cashout_jun <- subset(cashout, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+ 
+stbill_jun_nop2m_nop2p_noremit_novpc_cashout <- stbill_jun_nop2m_nop2p_noremit_novpc[(stbill_jun_nop2m_nop2p_noremit_novpc %in% cashout_jun[,1])]
+
+stc_jun <- cashout_jun %>%
+filter(USER_ID %in% stbill_jun_nop2m_nop2p_noremit_novpc_cashout)
+
+stc_df_jun <- as.data.frame(stc_jun)
+
+#cashin_jun <- subset(cashin, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+stc_df_jun_comb <- merge(stc_df_jun, cashin_jun, by = 'USER_ID')
+
+stc_fin_jun <- stc_df_jun_comb %>%
+filter(SUM.ORIG_AMT. >= 0.5 *  CountAmtCashin)
+
+
+
+#Check Cash In Extraction, use Dest ID instead of User_ID.
+#Same for VPC extraction.
+#stc_df_jun is users who top up via Singtel Bill, no p2m, no p2p, no remit in june.
+
+#July.
+
+stbill_jul <- subset(stbill, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+p2m_jul <- subset(p2m, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+stbill_jul_nop2m <- stbill_jul[,1]
+
+stbill_jul_nop2m <- stbill_jul_nop2m[!(stbill_jul_nop2m %in% p2m_jul[,1])]
+
+p2p_jul <- subset(p2p, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+stbill_jul_nop2m_nop2p <- stbill_jul_nop2m[!(stbill_jul_nop2m %in% p2p_jul[,1])]
+
+remit_jul <- subset(remit, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+stbill_jul_nop2m_nop2p_noremit <- stbill_jul_nop2m_nop2p[!(stbill_jul_nop2m_nop2p %in% remit_jul[,1])]
+
+vpc_jul <- subset(vpc, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+stbill_jul_nop2m_nop2p_noremit_novpc <- stbill_jul_nop2m_nop2p_noremit[!(stbill_jul_nop2m_nop2p_noremit %in% vpc_jul[,1])]
+
+
+cashout_jul <- subset(cashout, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+ 
+stbill_jul_nop2m_nop2p_noremit_novpc_cashout <- stbill_jul_nop2m_nop2p_noremit_novpc[(stbill_jul_nop2m_nop2p_noremit_novpc %in% cashout_jul[,1])]
+
+stc_jul <- cashout_jul %>%
+filter(USER_ID %in% stbill_jul_nop2m_nop2p_noremit_novpc_cashout)
+
+stc_df_jul <- as.data.frame(stc_jul)
+
+#cashin_jul <- subset(cashin, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+stc_df_jul_comb <- merge(stc_df_jul, cashin_jul, by = 'USER_ID')
+
+stc_fin_jul <- stc_df_jul_comb %>%
+filter(SUM.ORIG_AMT. >= 0.5 *  CountAmtCashin)
+
+
+
+#Check Cash In Extraction, use Dest ID instead of User_ID.
+#Same for VPC extraction.
+#stc_df_jul is users who top up via Singtel Bill, no p2m, no p2p, no remit in july.
+
+
+write.csv(cc_df_may,"C:\\Users\\P1318124\\Desktop\\Remittance\\cc_df_may.csv",row.names=FALSE)
+write.csv(cc_df_jun,"C:\\Users\\P1318124\\Desktop\\Remittance\\cc_df_jun.csv",row.names=FALSE)
+write.csv(cc_df_jul,"C:\\Users\\P1318124\\Desktop\\Remittance\\cc_df_jul.csv",row.names=FALSE)
+write.csv(stc_df_may,"C:\\Users\\P1318124\\Desktop\\Remittance\\stc_df_may.csv",row.names=FALSE)
+write.csv(stc_df_jun,"C:\\Users\\P1318124\\Desktop\\Remittance\\stc_df_jun.csv",row.names=FALSE)
+write.csv(stc_df_jul,"C:\\Users\\P1318124\\Desktop\\Remittance\\stc_df_jul.csv",row.names=FALSE)
+
+write.csv(stbill_may,"C:\\Users\\P1318124\\Desktop\\Remittance\\stbill_may.csv",row.names=FALSE)
+write.csv(stbill_jun,"C:\\Users\\P1318124\\Desktop\\Remittance\\stbill_jun.csv",row.names=FALSE)
+write.csv(stbill_jul,"C:\\Users\\P1318124\\Desktop\\Remittance\\stbill_jul.csv",row.names=FALSE)
+
+msisdn <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\acct_dest_id.csv",header=TRUE)
+credit_msisdn <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\credit_card_msisdn_atit.csv",header=TRUE)
+
+
+length(unique(msisdn[,1]))
+
+colnames(stbill_may)[1] <- "DEST_CUST_ID"
+colnames(stbill_jun)[1] <- "DEST_CUST_ID"
+colnames(stbill_jul)[1] <- "DEST_CUST_ID"
+
+msisdn_may <- subset(msisdn, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+
+msisdn_may_unique <- msisdn_may[!duplicated(msisdn_may[,1]),]
+
+
+msisdn_may_id <- merge(x=stbill_may,y=msisdn_may_unique,by='DEST_CUST_ID',all.x=TRUE)
+
+colnames(stc_fin_may)[1] <- "DEST_CUST_ID"
+colnames(stc_fin_jun)[1] <- "DEST_CUST_ID"
+colnames(stc_fin_jul)[1] <- "DEST_CUST_ID"
+
+stc_msisdn_may_id <- merge(x=stc_fin_may,y=msisdn_may_unique,by='DEST_CUST_ID',all.x=TRUE)
+write.csv(stc_msisdn_may_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\stc_msisdn_may_full.csv",row.names=FALSE)
+
+write.csv(msisdn_may_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\stbill_may_full.csv",row.names=FALSE)
+
+msisdn_jun <- subset(msisdn, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+
+msisdn_jun_unique <- msisdn_jun[!duplicated(msisdn_jun[,1]),]
+
+
+
+msisdn_jun_id <- merge(x=stbill_jun,y=msisdn_jun_unique,by='DEST_CUST_ID',all.x=TRUE)
+
+write.csv(msisdn_jun_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\stbill_jun_full.csv",row.names=FALSE)
+
+stc_msisdn_jun_id <- merge(x=stc_fin_jun,y=msisdn_jun_unique,by='DEST_CUST_ID',all.x=TRUE)
+write.csv(stc_msisdn_jun_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\stc_msisdn_jun_full.csv",row.names=FALSE)
+
+
+msisdn_jul <- subset(msisdn, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+
+msisdn_jul_unique <- msisdn_jul[!duplicated(msisdn_jul[,1]),]
+
+
+msisdn_jul_id <- merge(x=stbill_jul,y=msisdn_jul_unique,by='DEST_CUST_ID',all.x=TRUE)
+
+write.csv(msisdn_jul_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\stbill_jul_full.csv",row.names=FALSE)
+
+stc_msisdn_jul_id <- merge(x=stc_fin_jul,y=msisdn_jul_unique,by='DEST_CUST_ID',all.x=TRUE)
+write.csv(stc_msisdn_jul_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\stc_msisdn_jul_full.csv",row.names=FALSE)
+
+
+colnames(credit_msisdn)[1] <- "USER_ID"
+credit_msisdn_may <- subset(credit_msisdn, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "05-2018")
+credit_msisdn_may_unique <- credit_msisdn_may[!duplicated(credit_msisdn_may[,1]),]
+credit_msisdn_may_id <- merge(x=cc_fin_may,y=credit_msisdn_may_unique,by='USER_ID',all.x=TRUE)
+write.csv(credit_msisdn_may_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\cc_df_may_full_msisdn.csv",row.names=FALSE)
+
+head(credit_msisdn_may_id)
+
+credit_msisdn_jun <- subset(credit_msisdn, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "06-2018")
+credit_msisdn_jun_unique <- credit_msisdn_jun[!duplicated(credit_msisdn_jun[,1]),]
+credit_msisdn_jun_id <- merge(x=cc_fin_jun,y=credit_msisdn_jun_unique,by='USER_ID',all.x=TRUE)
+write.csv(credit_msisdn_jun_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\cc_df_jun_full_msisdn.csv",row.names=FALSE)
+
+credit_msisdn_jul <- subset(credit_msisdn, as.character(TO_CHAR.TXN_DT..MM.YYYY..) == "07-2018")
+credit_msisdn_jul_unique <- credit_msisdn_jul[!duplicated(credit_msisdn_jul[,1]),]
+credit_msisdn_jul_id <- merge(x=cc_fin_jul,y=credit_msisdn_jul_unique,by='USER_ID',all.x=TRUE)
+write.csv(credit_msisdn_jul_id,"C:\\Users\\P1318124\\Desktop\\Remittance\\cc_df_jul_full_msisdn.csv",row.names=FALSE)
+
+
+
+
+

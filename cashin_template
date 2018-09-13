@@ -1,0 +1,149 @@
+library(dplyr)
+library(reshape2)
+library(tidyverse)
+library(data.table)
+library(XLConnect)
+library(openxlsx)
+library(readxl)
+library(xlsx)
+
+
+#cashin_raw_path <- "C:\\Users\\P1318124\\Downloads\\0. Template Cash In Report.xlsx"
+#excel_sheets(path = cashin_raw_path)
+
+#cashin_raw_data <- read.xlsx("C:\\Users\\P1318124\\Downloads\\0. Template Cash In Report.xlsx","Data")
+
+#dim(cashin_raw_data)
+#colnames(cashin_raw_data)
+#head(cashin_raw_data)
+#tail(cashin_raw_data)
+#############################################################
+#PRESERVE.
+############################################################
+
+#write.csv(cashin_raw_data,"C:\\Users\\P1318124\\Desktop\\Remittance\\cashin_raw_data.csv",row.names=FALSE)
+
+cashin_raw_data2 <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\cashin_raw_data.csv",header = TRUE)
+
+cashin_compile <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Compile_Weekly.csv",header = TRUE)
+
+colnames(cashin_raw_data2)
+head(cashin_raw_data2)
+tail(cashin_raw_data2)
+
+#cashin_null <- cashin_raw_data2[which(is.na(cashin_raw_data2[,43])),]
+#write.csv(cashin_null,"C:\\Users\\P1318124\\Desktop\\Remittance\\cashin_null.csv",row.names=FALSE)
+
+cashin_compile$NIL <- NA
+cashin_compile$NIL2 <- NA
+cashin_compile$BRAND_NAME..Revised. <- NA
+cashin_compile$SingCash.Shop <- NA
+cashin_compile$TRANSACTION.DATE <- NA
+cashin_compile$MONTH <- NA
+cashin_compile$YEAR <- NA
+cashin_compile$WEEK <- NA
+cashin_compile$TEST.USERS <- NA
+
+#ca_cp <- cashin_raw_data2[which(cashin_raw_data2$SingCash.Shop ==  "CP"),]
+
+cashin_compile$BRAND_NAME..Revised <- as.character(cashin_compile$BRAND_NAME) 
+
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%711%")] <- "7E"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Comcentre Kiosk%")] <- "Comcentre Kiosk"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Dash Consumer Rewards%")] <- "Dash Consumer Rewards"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Jurong Point Kiosk 1%")] <- "Jurong Point Kiosk"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%mCash.CustCare.Adjustment%")] <- "mCash.CustCare.Adjustment"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%P2P%")] <- "P2P"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%SingShop%")] <- "SingCash"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%mRemit%")] <- "SingCash"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Operator Bill Cash%")] <- "Singtel Bill"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%HelloShop%")] <- "SingTel Shop" 
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Spot Awards%")] <- "Spot Awards"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%AXS%")] <- "AXS"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Credit Card CashIn%")] <- "Credit Card CashIn"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%eNETS%")] <- "eNETS"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%mCash.Adjustment.Request%")] <- "mCash.Adjustment.Request"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Merchant Guarantee%")] <- "Merchant Guarantee"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%NovelCommunication%")] <- "SERs"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%OnLineMobile%")] <- "SERs"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%PolarisTelecom%")] <- "SERs"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Trends.n.Trendies%")] <- "SERs"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%3MobileTelecom%")] <- "SERs"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Singcash mCash CashOut%")] <- "Singcash mCash CashOut"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Cashin.SRV.YongLei%")] <- "SingTel Roadshow"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%Singtel Transactions Upload%")] <- "Singtel Transactions Upload"
+cashin_compile$BRAND_NAME..Revised[which(cashin_compile$BRAND_NAME..Revised %like% "%VPC Adjustment Customer Cash In%")] <- "VPC Adjustment Customer Cash In"
+cashin_compile$BRAND_NAME..Revised[!(cashin_compile$BRAND_NAME..Revised %in% c("7E","Comcentre Kiosk","Dash Consumer Rewards","Jurong Point Kiosk","mCash.CustCare.Adjustment","P2P","SingCash","Singtel Bill","SingTel Shop","Spot Awards","AXS","Credit Card CashIn","eNETS","mCash.Adjustment.Request","Merchant Guarantee","SERs","Singcash mCash CashOut","SingTel Roadshow","Singtel Transactions Upload","VPC Adjustment Customer Cash In"))] <- "NA"
+
+cashin_compile$BRAND_NAME..Revised <- as.factor(cashin_compile$BRAND_NAME..Revised)
+
+
+
+#SingCash.Shop
+cashin_compile$SingCash.Shop <- cashin_compile$ACCOUNT_ID 
+
+cashin_compile$SingCash.Shop[which(cashin_compile$SingCash.Shop %in% c(31105,184832,320899,529726,529758,599800,673920,714156))] <- "CP"
+cashin_compile$SingCash.Shop[which(cashin_compile$SingCash.Shop %in% c(3779,3780,3781))] <- "Comcentre Kiosk"
+cashin_compile$SingCash.Shop[which(cashin_compile$SingCash.Shop %in% c(3784))] <- "Jurong Point Kiosk"
+cashin_compile$SingCash.Shop[which(cashin_compile$SingCash.Shop %in% c(15154,184840,246847,246937,496549,528892))] <- "LP"
+cashin_compile$SingCash.Shop[which(cashin_compile$SingCash.Shop %in% c(3756,3757))] <- "LP Kiosk"
+cashin_compile$SingCash.Shop[which(cashin_compile$SingCash.Shop %in% c(3756,3757))] <- "LP Kiosk"
+cashin_compile$SingCash.Shop[which(cashin_compile$SingCash.Shop %in% c(765231,801162,814896,817567))] <- "0"
+
+cashin_compile$SingCash.Shop[!(cashin_compile$SingCash.Shop %in% c("Jurong Point Kiosk","Comcentre Kiosk","CP","LP","LP Kiosk","0"))] <- "N/A"
+
+##########################################################################
+#TEST#
+x <- cashin_raw_data2
+
+x$SingCash.Shop <- x$ACCOUNT_ID 
+
+
+x$SingCash.Shop[which(x$SingCash.Shop %in% c(31105,184832,320899,529726,529758,599800,673920,714156))] <- "CP"
+x$SingCash.Shop[which(x$SingCash.Shop %in% c(3779,3780,3781))] <- "Comcentre Kiosk"
+x$SingCash.Shop[which(x$SingCash.Shop %in% c(3784))] <- "Jurong Point Kiosk"
+x$SingCash.Shop[which(x$SingCash.Shop %in% c(15154,184840,246847,246937,496549,528892))] <- "LP"
+x$SingCash.Shop[which(x$SingCash.Shop %in% c(3756,3757))] <- "LP Kiosk"
+x$SingCash.Shop[which(x$SingCash.Shop %in% c(3756,3757))] <- "LP Kiosk"
+x$SingCash.Shop[which(x$SingCash.Shop %in% c(765231,801162,814896,817567))] <- "0"
+
+x$SingCash.Shop[!(x$SingCash.Shop %in% c("Jurong Point Kiosk","Comcentre Kiosk","CP","LP","LP Kiosk","0"))] <- "N/A"
+
+
+x$BRAND_NAME..Revised <- as.character(x$BRAND_NAME) 
+
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%711%")] <- "7E"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Comcentre Kiosk%")] <- "Comcentre Kiosk"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Dash Consumer Rewards%")] <- "Dash Consumer Rewards"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Jurong Point Kiosk 1%")] <- "Jurong Point Kiosk"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%mCash.CustCare.Adjustment%")] <- "mCash.CustCare.Adjustment"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%P2P%")] <- "P2P"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%SingShop%")] <- "SingCash"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%mRemit Lucky Plaza Kiosk%")] <- "SingCash"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Operator Bill Cash%")] <- "Singtel Bill"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%HelloShop%")] <- "SingTel Shop" 
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Spot Awards%")] <- "Spot Awards"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%AXS%")] <- "AXS"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Credit Card CashIn%")] <- "Credit Card CashIn"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%eNETS%")] <- "eNETS"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%mCash.Adjustment.Request%")] <- "mCash.Adjustment.Request"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Merchant Guarantee%")] <- "Merchant Guarantee"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%NovelCommunication%")] <- "SERs"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%OnLineMobile%")] <- "SERs"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%PolarisTelecom%")] <- "SERs"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Trends.n.Trendies%")] <- "SERs"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%3MobileTelecom%")] <- "SERs"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Singcash mCash CashOut%")] <- "Singcash mCash CashOut"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Cashin.SRV.YongLei%")] <- "SingTel Roadshow"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%Singtel Transactions Upload%")] <- "Singtel Transactions Upload"
+x$BRAND_NAME..Revised[which(x$BRAND_NAME..Revised %like% "%VPC Adjustment Customer Cash In%")] <- "VPC Adjustment Customer Cash In"
+x$BRAND_NAME..Revised[!(x$BRAND_NAME..Revised %in% c("7E","Comcentre Kiosk","Dash Consumer Rewards","Jurong Point Kiosk","mCash.CustCare.Adjustment","P2P","SingCash","Singtel Bill","SingTel Shop","Spot Awards","AXS","Credit Card CashIn","eNETS","mCash.Adjustment.Request","Merchant Guarantee","SERs","Singcash mCash CashOut","SingTel Roadshow","Singtel Transactions Upload","VPC Adjustment Customer Cash In"))] <- "NA"
+
+cashin_compile$BRAND_NAME..Revised <- as.factor(cashin_compile$BRAND_NAME..Revised)
+
+#########################################################################
+
+
+table(as.data.frame(cashin_compile$BRAND_NAME..Revised))
+table(as.data.frame(x$BRAND_NAME..Revised))
+table(as.data.frame(cashin_raw_data2$BRAND_NAME..Revised))

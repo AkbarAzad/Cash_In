@@ -9,7 +9,7 @@ library(data.table)
 cashin_compile <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Compile_Weekly.csv",header = TRUE)
 
 
-cashin <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\Daily Telepin Reports\\Cash In 11 Sep to 17 Sep\\RepResult.20.Daily_Report_Wallet_Topup.S.1.Daily_Report_for_Wallet_Topup_20180913000100.csv",header = TRUE)
+cashin <- read.csv("C:\\Users\\P1318124\\Desktop\\Remittance\\Daily Telepin Reports\\Cash In 11 Sep to 17 Sep\\RepResult.20.Daily_Report_Wallet_Topup.S.1.Daily_Report_for_Wallet_Topup_20180914000100.csv",header = TRUE)
 
 wee <- apply(cashin[,c(3,4,12)], function(x) ifelse(x[,2] %like% 'Kiosk',x[,1] <- x[,3],x[,1] <- x[,1]))
 
@@ -21,7 +21,7 @@ weez <- cashin[which(cashin[,4]=="Kiosk"),]
 
 cashin_rm <- cashin[!(cashin[,4]=="Kiosk"),]
 
-weez[,2] <- weez[,12]
+weez[,3] <- weez[,12]
 
 test_class <- rep("FALSE",ncol(cashin))
 
@@ -42,18 +42,6 @@ cashin_fin <- rbind(cashin_rm,weez)
 cashin_fin2 <- rbind(cashin_compile,cashin_fin)
 
 write.csv(cashin_fin2,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Compile_Weekly.csv",row.names=FALSE)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -42,6 +42,4 @@ cashin_fin <- rbind(cashin_rm,weez)
 cashin_fin2 <- rbind(cashin_compile,cashin_fin)
 
 write.csv(cashin_fin2,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Compile_Weekly.csv",row.names=FALSE)
-
-
-
+##

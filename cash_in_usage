@@ -143,7 +143,120 @@ xc_pivot_finalapr2[23,1] <- "Nett Spends"
 xc_pivot_finalisedapr <- rbind(xc_pivot_finalapr,xc_pivot_finalapr2)
 write.csv(xc_pivot_finalisedapr,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Monthly_Final.csv",row.names=FALSE)
 
+library(xlsx)
+write.xlsx(xc_pivot_finalisedapr, file = "C:\\Users\\P1318124\\Desktop\\Remittance\\Working_Usage_Cash_In.xlsx", sheetName="Monthly",row.names=FALSE)
+write.xlsx(xc_pivot_finalisedday, file = "C:\\Users\\P1318124\\Desktop\\Remittance\\Working_Usage_Cash_In.xlsx", sheetName="Daily", append = TRUE, row.names=FALSE)
+
+#SingCash.Shop.
+xc_pivot_apr_singshop <- dcast(xcapr, SingCash.Shop ~ Month_Year, value.var = "ORIGINAL_AMOUNT", fun.aggregate=sum)
+xc_pivot_apr2_singshop <- xc_pivot_apr_singshop[,c(1,3,2,4)]
+write.csv(xc_pivot_apr2_singshop,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Monthly_SingCash.Shop.csv",row.names=FALSE)
+
+xc_pivot_apr_count_singshop <- dcast(xcapr, SingCash.Shop ~ Month_Year, value.var = "ORIGINAL_AMOUNT", fun.aggregate=length)
+xc_pivot_apr2_count_singshop <- xc_pivot_apr_count_singshop[,c(1,3,2,4)]
+write.csv(xc_pivot_apr2_count_singshop,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Monthly_Count_SingCash.Shop.csv",row.names=FALSE)
+
+xc_pivot_apr2_count_sum_singshop <- rep(0, ncol(xc_pivot_apr2_count_singshop))
+for(i in 2:length(xc_pivot_apr2_count_sum_singshop)){
+xc_pivot_apr2_count_sum_singshop[i] <- sum(xc_pivot_apr2_count_singshop[,i])
+}
+
+xc_pivot_apr2_count_sum_singshop[1] <- "Nett Transactions"
+
+xc_pivot_apr2_count_singshop[,2:] <- as.numeric(xc_pivot_apr2_count_singshop[,2:])
+
+xc_pivot_finalapr_singshop <- rbind(xc_pivot_apr2_count_singshop,xc_pivot_apr2_count_sum_singshop)
+
+xc_pivot_finalapr_singshop[,1] <- as.character(xc_pivot_finalapr_singshop[,1])
+
+xc_pivot_finalapr_singshop[23,1] <- "Nett Transactions"
+
+#
+xc_pivot_apr2_sum_singshop <- rep(0, ncol(xc_pivot_apr2_singshop))
+for(i in 2:length(xc_pivot_apr2_sum_singshop)){
+xc_pivot_apr2_sum_singshop[i] <- sum(xc_pivot_apr2_singshop[,i])
+}
+
+xc_pivot_apr2_sum_singshop[1] <- "Nett Spends"
+
+xc_pivot_apr2_singshop[,2:] <- as.numeric(xc_pivot_apr2_singshop[,2:])
+
+xc_pivot_finalapr2_singshop <- rbind(xc_pivot_apr2_singshop,xc_pivot_apr2_sum_singshop)
+
+xc_pivot_finalapr2_singshop[,1] <- as.character(xc_pivot_finalapr2_singshop[,1])
+
+xc_pivot_finalapr2_singshop[23,1] <- "Nett Spends"
+
+xc_pivot_finalisedapr_singshop <- rbind(xc_pivot_finalapr_singshop,xc_pivot_finalapr2_singshop)
+
+
+########
+
+xc_pivot_day_singshop <- dcast(xc_pivot, SingCash.Shop ~ dmy(TRANSACTION.DATE), value.var = "ORIGINAL_AMOUNT", fun.aggregate=sum)
+write.csv(xc_pivot_day,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_SingCash.Shop.csv",row.names=FALSE)
+
+xc_pivot_day_count_singshop <- dcast(xc_pivot, SingCash.Shop ~ dmy(TRANSACTION.DATE), value.var = "ORIGINAL_AMOUNT", fun.aggregate=length)
+write.csv(xc_pivot_day_count_singshop,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Count_SingCash.Shop.csv",row.names=FALSE)
+
+xc_pivot_day_count_sum_singshop <- rep(0, ncol(xc_pivot_day_count_singshop))
+for(i in 2:length(xc_pivot_day_count_sum_singshop)){
+xc_pivot_day_count_sum_singshop[i] <- sum(xc_pivot_day_count_singshop[,i])
+}
+
+xc_pivot_day_count_sum_singshop[1] <- "Nett Transactions"
+
+xc_pivot_day_count_singshop[,2:] <- as.numeric(xc_pivot_day_count[,2:])
+
+xc_pivot_finalday_singshop <- rbind(xc_pivot_day_count_singshop,xc_pivot_day_count_sum_singshop)
+
+xc_pivot_finalday_singshop[,1] <- as.character(xc_pivot_finalday_singshop[,1])
+
+xc_pivot_finalday_singshop[23,1] <- "Nett Transactions"
+write.csv(xc_pivot_finalday_singshop,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Combined_SingCash.Shop.csv",row.names=FALSE)
+###############################################################################################
+###########################################################################################
+
+
+xc_pivot_day_sum_singshop <- rep(0, ncol(xc_pivot_day_singshop))
+for(i in 2:length(xc_pivot_day_sum_singshop)){
+xc_pivot_day_sum_singshop[i] <- sum(xc_pivot_day_singshop[,i])
+}
+
+xc_pivot_day_sum_singshop[1] <- "Nett Spends"
+
+xc_pivot_day_singshop[,2:] <- as.numeric(xc_pivot_day_singshop[,2:])
+
+xc_pivot_finalday2_singshop <- rbind(xc_pivot_day_singshop,xc_pivot_day_sum_singshop)
+
+xc_pivot_finalday2_singshop[,1] <- as.character(xc_pivot_finalday2_singshop[,1])
+
+xc_pivot_finalday2_singshop[23,1] <- "Nett Spends"
+write.csv(xc_pivot_finalday2_singshop,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Combined2_SingCash.Shop.csv",row.names=FALSE)
+
+xc_pivot_finalisedday_singshop <- rbind(xc_pivot_finalday_singshop,xc_pivot_finalday2_singshop)
+write.csv(xc_pivot_finalisedday_singshop,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Final_SingCash.Shop.csv",row.names=FALSE)
+
+##BRAND_NAME
+xc_pivot_day_count_brandname <- dcast(xc_pivot, BRAND_NAME ~ dmy(TRANSACTION.DATE), value.var = "ORIGINAL_AMOUNT", fun.aggregate=length)
+write.csv(xc_pivot_day_count_brandname,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Count_Brand_Name.csv",row.names=FALSE)
+
+##CORRECT
+brandnamepiv <- xc_pivot %>%
+group_by(BRAND_NAME, TRANSACTION.DATE)
+write.csv(brandnamepiv,"C:\\Users\\P1318124\\Desktop\\Remittance\\brandnamepiv.csv",row.names=FALSE)
 
 
 
+xc_pivot_day_brandname <- dcast(xc_pivot, BRAND_NAME ~ dmy(TRANSACTION.DATE), value.var = "ORIGINAL_AMOUNT", fun.aggregate=sum)
+write.csv(xc_pivot_day_brandname,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Brand_Name.csv",row.names=FALSE)
+
+
+
+
+
+##BRAND_NAME..Revised.
+xc_pivot_day_brandnamerev <- dcast(xc_pivot, BRAND_NAME..Revised. ~ dmy(TRANSACTION.DATE), value.var = "ORIGINAL_AMOUNT", fun.aggregate=sum)
+write.csv(xc_pivot_day_brandnamerev,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Brand_NameRev.csv",row.names=FALSE)
+xc_pivot_day_count_brandnamerev <- dcast(xc_pivot, BRAND_NAME..Revised. ~ dmy(TRANSACTION.DATE), value.var = "ORIGINAL_AMOUNT", fun.aggregate=length)
+write.csv(xc_pivot_day_count_brandnamerev,"C:\\Users\\P1318124\\Desktop\\Remittance\\Cashin_Usage_Daily_Count_Brand_NameRev.csv",row.names=FALSE)
 
